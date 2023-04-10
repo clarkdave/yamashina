@@ -1,8 +1,12 @@
 export namespace Wanikani {
   export type SubjectType = 'radical' | 'kanji' | 'vocabulary'
 
+  export type Subject = WanikaniApi.SubjectData & {
+    id: number
+  }
+
   export type Dictionary = {
-    [english: string]: WanikaniApi.SubjectData
+    [english: string]: Subject
   }
 
   export interface Dictionaries {
@@ -59,6 +63,13 @@ export namespace WanikaniApi {
     accepted_answer: boolean
   }
 
+  export interface SubjectReading {
+    type: 'onyomi' | 'kunyomi'
+    reading: string
+    primary: boolean
+    accepted_answer: boolean
+  }
+
   export interface AuxiliaryMeaning {
     meaning: string
     type: 'whitelist' | 'blacklist'
@@ -86,6 +97,7 @@ export namespace WanikaniApi {
     characters: string
     character_images: CharacterImage[]
     meanings: SubjectMeaning[]
+    readings?: SubjectReading[]
     auxiliary_meanings: AuxiliaryMeaning[]
     amalgamation_subject_ids: number[]
     meaning_mnemonic: string

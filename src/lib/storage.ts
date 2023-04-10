@@ -1,6 +1,6 @@
 import browser from 'webextension-polyfill'
+import { ExtensionSettings, getDefaultExtensionSettings } from './settings'
 import { Wanikani } from './wanikani/types'
-import { ExtensionSettings, defaultExtensionSettings } from './settings'
 
 export interface StorageData {
   dictionaries: Wanikani.Dictionaries | null
@@ -9,7 +9,7 @@ export interface StorageData {
 
 const defaultData: StorageData = {
   dictionaries: null,
-  extensionSettings: defaultExtensionSettings,
+  extensionSettings: getDefaultExtensionSettings(),
 }
 
 async function get<T extends keyof StorageData>(

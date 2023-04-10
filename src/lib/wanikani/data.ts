@@ -51,10 +51,15 @@ function addMeaningsToDictionary(
       return PROPER_NOUNS.includes(word) ? word : word.toLowerCase()
     }
 
+    const subjectForDict: Wanikani.Subject = {
+      id: subject.id,
+      ...subject.data,
+    }
+
     switch (kind) {
       case 'primary': {
         for (const meaning of subject.data.meanings) {
-          dict[getMeaningKey(meaning.meaning)] = subject.data
+          dict[getMeaningKey(meaning.meaning)] = subjectForDict
         }
       }
 
@@ -65,7 +70,7 @@ function addMeaningsToDictionary(
           if (meaning.type !== 'whitelist') continue
           if (dict[key]) continue
 
-          dict[key] = subject.data
+          dict[key] = subjectForDict
         }
     }
   }

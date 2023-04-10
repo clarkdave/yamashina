@@ -1,29 +1,33 @@
+import classNames from 'classnames'
 import {
   Button,
-  Card,
   CogIcon,
-  Pane,
   TextInputField,
   toaster,
+  Text,
+  Paragraph,
+  Small,
+  FormFieldDescription,
 } from 'evergreen-ui'
-import logo from '../assets/icons/128.png'
-import classNames from 'classnames'
-import * as styles from './styles/OptionsApp.css'
 import { useEffect, useState } from 'react'
-import { ExtensionSettings } from '../lib/settings'
+import logo from '../assets/icons/128.png'
+import { getExtensionSettingsFromStorage } from '../lib/settings'
 import { storage } from '../lib/storage'
 import { sleep } from '../lib/utils/time'
 import { createWanikaniClient } from '../lib/wanikani/api'
+import * as styles from './styles/OptionsApp.css'
 
 export const OptionsApp: React.FC = () => {
   const [ready, setReady] = useState(false)
   const [wanikaniApiKey, setWanikaniApiKey] = useState<string | null>('')
+  const [tooltipDelay, setTooltipDelay] = useState<number | string>(0)
   const [isSaving, setIsSaving] = useState(false)
 
   useEffect(() => {
-    storage.get('extensionSettings').then(settings => {
+    getExtensionSettingsFromStorage().then(settings => {
       setReady(true)
       setWanikaniApiKey(settings.wanikaniApiKey)
+      setTooltipDelay(settings.tooltipDelayMs)
     })
   }, [])
 
@@ -38,11 +42,24 @@ export const OptionsApp: React.FC = () => {
         return
       }
 
+      const parsedTooltipDelay = parseInt(String(tooltipDelay))
+
+      if (Number.isNaN(parsedTooltipDelay) || parsedTooltipDelay < 0) {
+        toaster.danger('Tooltip delay must be a valid number', {
+          id: 'error',
+        })
+        return
+      }
+
       await storage.set('extensionSettings', {
         ...(await storage.get('extensionSettings')),
         wanikaniApiKey,
+        tooltipDelayMs: parsedTooltipDelay,
       })
+
       await sleep(500) // stop excessive clicking
+
+      setTooltipDelay(parsedTooltipDelay)
       toaster.success('Saved changes', { id: 'success' })
     } catch (err) {
       console.error(err)
@@ -70,10 +87,30 @@ export const OptionsApp: React.FC = () => {
         <div className={styles.formContainer}>
           <TextInputField
             label="Wanikani API key"
+            description={
+              <FormFieldDescription>
+                Can be created in{' '}
+                <a
+                  href="https://www.wanikani.com/settings/personal_access_tokens"
+                  target="_blank">
+                  your Wanikani settings
+                </a>
+              </FormFieldDescription>
+            }
             value={wanikaniApiKey ?? ''}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               setWanikaniApiKey(e.target.value.trim())
             }
+          />
+          <TextInputField
+            label="Tooltip delay"
+            description="Delay, in milliseconds, before the tooltip is displayed when hovering over a replaced word"
+            value={tooltipDelay}
+            type="number"
+            min={0}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+              setTooltipDelay(e.target.value)
+            }}
           />
           <div className={styles.formActions}>
             <Button

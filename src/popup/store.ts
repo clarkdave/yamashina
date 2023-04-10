@@ -1,11 +1,11 @@
-import { ExtensionSettings, defaultExtensionSettings } from '../lib/settings'
+import { ExtensionSettings, getDefaultExtensionSettings } from '../lib/settings'
 import { storage } from '../lib/storage'
 import { getWanikaniDictionaries } from '../lib/wanikani/data'
 import { signal } from '@preact/signals-react'
 import { runtime } from '../lib/runtime'
 
 export const state = {
-  extensionSettings: signal(defaultExtensionSettings),
+  extensionSettings: signal(getDefaultExtensionSettings()),
   wanikani: {
     syncing: signal(false),
   },

@@ -10,7 +10,7 @@ export const floatingContainer = style({
   position: 'relative',
   top: '200px',
   left: '50%',
-  transform: 'translate(-50%, -50%)',
+  transform: 'translateX(-50%)',
   background: 'white',
   display: 'flex',
   flexDirection: 'column',
