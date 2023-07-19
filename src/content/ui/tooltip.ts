@@ -13,10 +13,34 @@ export function addTooltipToElement(
   let timer: number | null = null
   let tooltip: HTMLElement | null = null
 
-  element.addEventListener('mouseover', () => {
+  element.addEventListener('mouseover', function (event) {
+    if (timer || tooltip) return
+
     timer = window.setTimeout(() => {
       tooltip = createTooltip(subject, original)
-      element.appendChild(tooltip)
+      document.body.appendChild(tooltip)
+      const rect = this.getBoundingClientRect()
+
+      tooltip.style.top = '0'
+      tooltip.style.left = '0'
+
+      // set min width now to ensure browser doesn't try to shrink it down once
+      // we move it into position
+      tooltip.style.minWidth = `${tooltip.offsetWidth}px`
+
+      let top = rect.top - tooltip.offsetHeight - 5
+      let left = rect.left
+
+      if (left + tooltip.offsetWidth > window.innerWidth) {
+        left = window.innerWidth - tooltip.offsetWidth
+      }
+
+      if (top < 0) {
+        top = 0
+      }
+
+      tooltip.style.top = `${top}px`
+      tooltip.style.left = `${left}px`
     }, settings.tooltipDelayMs)
   })
 
@@ -27,7 +51,7 @@ export function addTooltipToElement(
     }
 
     if (tooltip) {
-      element.removeChild(tooltip)
+      document.body.removeChild(tooltip)
       tooltip = null
     }
   })
@@ -52,7 +76,7 @@ function createTooltip(
     YamashinaTooltipElement.tag,
     {
       style: {
-        position: 'absolute',
+        position: 'fixed',
         background: 'rgba(0, 0, 0, 0.98)',
         padding: '6px 12px',
         'border-radius': '4px',
@@ -93,6 +117,8 @@ function createTooltip(
           {
             style: {
               ...normalize,
+              // prevent japanese characters from breaking
+              'word-break': 'keep-all',
             },
           },
           reading ?? '',
