@@ -4,6 +4,7 @@ export interface ExtensionSettings {
   wanikaniApiKey: string | null
   domainDenylist: string[]
   tooltipDelayMs: number
+  useKanjiForNumbers: boolean
 }
 
 export function getDefaultExtensionSettings(): ExtensionSettings {
@@ -11,6 +12,7 @@ export function getDefaultExtensionSettings(): ExtensionSettings {
     wanikaniApiKey: null,
     domainDenylist: [],
     tooltipDelayMs: 1000,
+    useKanjiForNumbers: false,
   }
 }
 

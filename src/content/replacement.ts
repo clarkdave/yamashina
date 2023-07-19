@@ -12,13 +12,18 @@ export function replaceWordsInDocument(
   settings: ExtensionSettings,
 ): void {
   registerCustomElements()
-  processAllTextNodes(dictionaries)
+  processAllTextNodes(dictionaries, settings)
   addReplacementTooltips(dictionaries, settings)
 }
 
-function processAllTextNodes(dictionaries: Wanikani.Dictionaries) {
+function processAllTextNodes(
+  dictionaries: Wanikani.Dictionaries,
+  settings: ExtensionSettings,
+) {
   const processStartedAt = Date.now()
-  const processor = new TextNodeProcessor(dictionaries)
+  const processor = new TextNodeProcessor(dictionaries, {
+    useKanjiForNumbers: settings.useKanjiForNumbers,
+  })
   let nodesReplaced = 0
 
   document.querySelectorAll(TEXT_SELECTOR).forEach(element => {
@@ -63,7 +68,10 @@ class TextNodeProcessor {
   private vocab: Wanikani.Dictionary
   private multiWordVocab: Wanikani.Dictionary
 
-  constructor(dictionaries: Wanikani.Dictionaries) {
+  constructor(
+    dictionaries: Wanikani.Dictionaries,
+    private readonly settings: Pick<ExtensionSettings, 'useKanjiForNumbers'>,
+  ) {
     this.vocab = dictionaries.vocabulary
     this.multiWordVocab = Object.fromEntries(
       Object.entries(this.vocab).filter(([english]) => english.includes(' ')),
@@ -73,6 +81,10 @@ class TextNodeProcessor {
   processTextNode(node: ChildNode) {
     let text = node.textContent
     if (!text) return
+
+    if (/^[0-9]+$/.test(text) && !this.settings.useKanjiForNumbers) {
+      return
+    }
 
     const multiWordReplacements: Array<{
       original: string

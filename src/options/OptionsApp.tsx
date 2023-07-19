@@ -4,10 +4,9 @@ import {
   CogIcon,
   TextInputField,
   toaster,
-  Text,
-  Paragraph,
-  Small,
+  Checkbox,
   FormFieldDescription,
+  FormField,
 } from 'evergreen-ui'
 import { useEffect, useState } from 'react'
 import logo from '../assets/icons/128.png'
@@ -21,6 +20,7 @@ export const OptionsApp: React.FC = () => {
   const [ready, setReady] = useState(false)
   const [wanikaniApiKey, setWanikaniApiKey] = useState<string | null>('')
   const [tooltipDelay, setTooltipDelay] = useState<number | string>(0)
+  const [useKanjiForNumbers, setUseKanjiForNumbers] = useState<boolean>(false)
   const [isSaving, setIsSaving] = useState(false)
 
   useEffect(() => {
@@ -28,6 +28,7 @@ export const OptionsApp: React.FC = () => {
       setReady(true)
       setWanikaniApiKey(settings.wanikaniApiKey)
       setTooltipDelay(settings.tooltipDelayMs)
+      setUseKanjiForNumbers(settings.useKanjiForNumbers)
     })
   }, [])
 
@@ -55,6 +56,7 @@ export const OptionsApp: React.FC = () => {
         ...(await storage.get('extensionSettings')),
         wanikaniApiKey,
         tooltipDelayMs: parsedTooltipDelay,
+        useKanjiForNumbers,
       })
 
       await sleep(500) // stop excessive clicking
@@ -112,6 +114,15 @@ export const OptionsApp: React.FC = () => {
               setTooltipDelay(e.target.value)
             }}
           />
+          <FormField label="Formatting" marginBottom={10}>
+            <Checkbox
+              label="Replace numbers with kanji (4 becomes 四)"
+              checked={useKanjiForNumbers}
+              onChange={e => {
+                setUseKanjiForNumbers(e.target.checked)
+              }}
+            />
+          </FormField>
           <div className={styles.formActions}>
             <Button
               onClick={() => saveChanges()}
