@@ -11,4 +11,14 @@ export const PROPER_NOUNS = [
   'October',
   'November',
   'December',
+
+  'Mercury',
+  'Venus',
+  'Earth',
+  'Mars',
+  'Jupiter',
+  'Saturn',
+  'Uranus',
+  'Neptune',
+  'Pluto',
 ]
