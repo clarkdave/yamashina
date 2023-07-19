@@ -16,11 +16,8 @@ export async function getWanikaniDictionaries({
     subject_types: types,
   })
 
-  const subjectIds = statistics.map(x => x.data.subject_id)
   const subjects = await api.getAllSubjects({
     types,
-    // avoid trying to send a huge URL if we have a lot of subject IDs
-    ids: subjectIds.length > 500 ? undefined : subjectIds,
   })
 
   const kanji: Wanikani.Dictionary = {}
