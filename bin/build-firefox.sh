@@ -10,7 +10,8 @@ npx web-ext lint \
   --source-dir ./dist/webext-prod
 
 npx web-ext build \
-  --source-dir ./dist/webext-prod
+  --source-dir ./dist/webext-prod \
+  --overwrite-dest
 
 npx web-ext sign \
   --source-dir ./dist/webext-prod \

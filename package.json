@@ -6,12 +6,12 @@
   "description": "An extension to help learn Japanese words",
   "license": "MIT",
   "scripts": {
-    "clean": "rm -rf dist/*",
-    "watch": "pnpm run clean && parcel manifest.json --host localhost --target webext-dev",
+    "clean": "rm -rf dist/* ; rm -rf build/*",
+    "watch": "pnpm run clean && parcel manifest.json --dist-dir=build --host localhost --target webext-dev",
     "build:firefox": "./bin/build-firefox.sh",
-    "serve:firefox": "web-ext run --firefox=deved --start-url \"about:debugging#/runtime/this-firefox\"  --source-dir ./dist",
-    "serve:chrome": "web-ext run -t chromium --start-url \"https://google.com\" --source-dir ./dist",
-    "web-ext:lint": "web-ext lint --source-dir ./dist"
+    "serve:firefox": "web-ext run --firefox=deved --start-url \"about:debugging#/runtime/this-firefox\"  --source-dir ./build",
+    "serve:chrome": "web-ext run -t chromium --start-url \"https://google.com\" --source-dir ./build",
+    "web-ext:lint": "web-ext lint --source-dir ./build"
   },
   "targets": {
     "webext-dev": {
